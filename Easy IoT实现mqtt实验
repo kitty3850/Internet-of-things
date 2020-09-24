@@ -1,0 +1,66 @@
+/*!
+ * MindPlus
+ * mpython
+ *
+ */
+#include <MPython.h>
+#include <DFRobot_Iot.h>
+// 函数声明
+void onButtonBPressed();
+void obloqMqttEventT0(String& message);
+// 静态常量
+const String topics[5] = {"eOGA5iFGg","SS405mKGg","","",""};
+const MsgHandleCb msgHandles[5] = {obloqMqttEventT0,NULL,NULL,NULL,NULL};
+// 创建对象
+DFRobot_Iot myIot;
+
+
+// 主程序开始
+void setup() {
+	mPython.begin();
+	myIot.setMqttCallback(msgHandles);
+	buttonB.setPressedCallback(onButtonBPressed);
+	display.setCursorLine(1);
+	display.printLine("掌控连接成功");
+	myIot.wifiConnect("007", "hscqweasd");
+	while (!myIot.wifiStatus()) {yield();}
+	display.setCursorLine(2);
+	display.printLine("wifi连接成功");
+	myIot.init("iot.dfrobot.com.cn","WpFo5iFGg","","ZpFociFGRz",topics,1883);
+	myIot.connect();
+	while (!myIot.connected()) {yield();}
+	display.setCursorLine(3);
+	display.printLine("MQTT连接成功");
+	display.setCursorLine(4);
+	display.printLine("丘伊婉");
+	delay(3000);
+	display.fillInLine(1, 0);
+	display.fillInLine(2, 0);
+	display.fillInLine(3, 0);
+	display.fillInLine(4, 0);
+}
+void loop() {
+	while (!(buttonA.isPressed())) {yield();}
+	myIot.publish(topic_1, "2018764342丘伊婉i");
+	display.setCursorLine(1);
+	display.printLine("2018764342丘伊婉发送成功");
+	rgb.write(0, 0x0000FF);
+}
+
+
+// 事件回调函数
+void onButtonBPressed() {
+	display.fillScreen(0);
+	myIot.publish(topic_1, "丘伊婉收到，谢谢");
+	display.setCursorLine(1);
+	display.printLine("丘伊婉回复成功");
+	rgb.write(2, 0xFFFF33);
+	delay(2000);
+	rgb.write(-1, 0x000000);
+}
+void obloqMqttEventT0(String& message) {
+	display.fillScreen(0);
+	rgb.write(1, 0xCC33CC);
+	display.setCursorLine(1);
+	display.printLine(message);
+}
